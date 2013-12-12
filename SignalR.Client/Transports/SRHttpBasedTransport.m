@@ -150,7 +150,7 @@
 - (NSString *)receiveQueryString:(id <SRConnectionInterface>)connection data:(NSString *)data {
     NSMutableString *queryStringBuilder = [NSMutableString string];
     [queryStringBuilder appendFormat:@"?transport=%@",_transport];
-    [queryStringBuilder appendFormat:@"&connectionToken=%@",[connection.connectionToken stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    [queryStringBuilder appendFormat:@"&connectionToken=%@", [[[connection.connectionToken stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding] stringByReplacingOccurrencesOfString:@"/" withString:@"%2F"] stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"]];
 
     if(connection.messageId) {
         [queryStringBuilder appendFormat:@"&messageId=%@",[connection.messageId stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
@@ -176,7 +176,7 @@
 //?transport=<transportname>&connectionToken=<connectionToken><customquerystring>
 - (NSString *)sendQueryString:(id <SRConnectionInterface>)connection {
     return [NSString stringWithFormat:@"?transport=%@&connectionToken=%@%@",_transport,
-            [connection.connectionToken stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding],
+            [[[connection.connectionToken stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding] stringByReplacingOccurrencesOfString:@"/" withString:@"%2F"]  stringByReplacingOccurrencesOfString:@"+" withString:@"%2B"],
             [SRHttpBasedTransport getCustomQueryString:connection]];
 }
 
